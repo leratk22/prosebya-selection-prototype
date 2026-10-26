@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Подбор психолога — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+
+  <section class="screen" id="s31" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="appbar">
+      <button class="appbar-back" data-action="back" aria-label="Назад" hidden>
+        <img src="assets/chevron-left.svg" width="24" height="24" alt="">
+      </button>
+      <h1 class="appbar-title">Что вас беспокоит?</h1>
+    </header>
+    <div class="progress-row">
+      <div class="progress"><i class="progress-fill" style="width:20%"></i></div>
+      <span class="progress-count">1 из 5</span>
+    </div>
+    <div class="content content-px32">
+      <div id="groupList" class="group-list"></div>
+      <button class="promo-card promo-video" data-action="openFreeText" aria-label="Расскажу своими словами">
+        <video class="promo-video-el" src="assets/promo.mp4" autoplay muted loop playsinline></video>
+      </button>
+    </div>
+    <footer class="bottom-bar">
+      <button class="btn btn-primary" id="continueBtn" data-action="continue" disabled>Продолжить</button>
+    </footer>
+  </section>
+
+  <section class="screen" id="s31a" data-screen>
+    <div class="statusbar statusbar-dark">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular-white.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-white.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="modal-nav">
+      <button class="modal-cancel" data-action="cancelGroup">Отменить</button>
+      <h1 class="modal-title" id="groupTitle">Моё состояние</h1>
+    </header>
+    <p class="screen-note">Можно выбрать несколько пунктов<br>или ничего не выбирать</p>
+    <div class="content content-px16">
+      <div id="topicList" class="topic-list"></div>
+    </div>
+    <footer class="bottom-bar bottom-bar-bordered">
+      <button class="btn btn-primary" data-action="saveGroup">Сохранить</button>
+    </footer>
+  </section>
+
+  <section class="screen" id="s45a" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="appbar">
+      <button class="appbar-back" data-action="back" aria-label="Назад">
+        <img src="assets/chevron-left.svg" width="24" height="24" alt="">
+      </button>
+      <h1 class="appbar-title">Что на самом деле вас беспокоит?</h1>
+    </header>
+    <div class="content content-px32">
+      <p class="lead">Опишите то, что вас беспокоит. Даже парой слов. Посмотрим, с чем это может быть связано и на что стоит обратить внимание.</p>
+      <div class="field" id="fieldA">
+        <div class="field-box">
+          <label class="field-label" for="freeTextA">Что вас беспокоит?</label>
+          <textarea id="freeTextA" class="field-input" rows="1"></textarea>
+        </div>
+        <div class="field-footer">
+          <p class="field-hint">Например, «Вроде все нормально, но ничего не хочется»</p>
+          <span class="field-counter" id="counterA">0/200</span>
+        </div>
+        <p class="field-error" id="errorA" hidden>В запросе больше 200 символов. Сократите текст, чтобы отправить его.</p>
+      </div>
+    </div>
+    <footer class="bottom-bar">
+      <button class="btn btn-primary" id="sendA" data-action="send" disabled>Отправить</button>
+    </footer>
+  </section>
+
+  <section class="screen" id="s45c" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <div class="loader">
+      <span class="loader-glow" aria-hidden="true"></span>
+      <span class="loader-star" aria-hidden="true">
+        <img src="assets/star.svg" alt="">
+      </span>
+      <p class="loader-text">Классифицируем ваш запрос<span class="loader-dots" aria-hidden="true"><i></i><i></i><i></i></span></p>
+    </div>
+  </section>
+
+  <section class="screen" id="s45d" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="appbar">
+      <button class="appbar-back" data-action="back" aria-label="Назад">
+        <img src="assets/chevron-left.svg" width="24" height="24" alt="">
+      </button>
+      <h1 class="appbar-title">Что на самом деле вас беспокоит?</h1>
+    </header>
+    <div class="content content-px32">
+      <p class="lead">Выбрали темы, которые могут быть связаны с вашей ситуацией. Оставьте те, которые вам подходят.</p>
+      <div id="suggestList" class="suggest-list"></div>
+    </div>
+    <footer class="bottom-bar bottom-bar-stack">
+      <button class="btn btn-primary" id="confirmTopics" data-action="confirmTopics" disabled>Да, это про меня</button>
+      <button class="btn btn-secondary" data-action="rejectTopics">Ничего не подходит</button>
+    </footer>
+  </section>
+
+  <section class="screen" id="s45e" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="appbar">
+      <button class="appbar-back" data-action="back" aria-label="Назад">
+        <img src="assets/chevron-left.svg" width="24" height="24" alt="">
+      </button>
+      <h1 class="appbar-title">Что на самом деле вас беспокоит?</h1>
+    </header>
+    <div class="content content-px32">
+      <p class="lead">Опишите то, что вас беспокоит. Даже парой слов. Посмотрим, с чем это может быть связано и на что стоит обратить внимание.</p>
+      <div class="field" id="fieldE">
+        <div class="field-box">
+          <label class="field-label" for="freeTextE">Что вас беспокоит?</label>
+          <textarea id="freeTextE" class="field-input" rows="1"></textarea>
+        </div>
+        <div class="field-footer">
+          <p class="field-hint">Например, «Вроде все нормально, но ничего не хочется»</p>
+          <span class="field-counter" id="counterE">0/200</span>
+        </div>
+        <p class="field-error" id="errorE" hidden>В запросе больше 200 символов. Сократите текст, чтобы отправить его.</p>
+      </div>
+    </div>
+    <footer class="bottom-bar bottom-bar-stack">
+      <button class="btn btn-primary" id="sendE" data-action="sendEdit" disabled>Отправить</button>
+      <button class="btn btn-secondary" data-action="chooseReady">Выбрать из готовых вариантов</button>
+    </footer>
+  </section>
+
+  <section class="screen" id="s45f" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="appbar">
+      <button class="appbar-back" data-action="back" aria-label="Назад">
+        <img src="assets/chevron-left.svg" width="24" height="24" alt="">
+      </button>
+      <h1 class="appbar-title">Что на самом деле вас беспокоит?</h1>
+    </header>
+    <div class="content content-px32">
+      <p class="lead">Похоже, ваш запрос особенный. Мы подберем специалиста, который с ним работает, и свяжемся с вами.</p>
+    </div>
+    <footer class="bottom-bar bottom-bar-stack">
+      <button class="btn btn-primary" data-action="sendToGuide">Отправить</button>
+      <button class="btn btn-secondary" data-action="chooseReady">Выбрать из готовых вариантов</button>
+    </footer>
+  </section>
+
+  <section class="screen" id="s45err" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="appbar">
+      <button class="appbar-back" data-action="back" aria-label="Назад">
+        <img src="assets/chevron-left.svg" width="24" height="24" alt="">
+      </button>
+      <h1 class="appbar-title">Что на самом деле вас беспокоит?</h1>
+    </header>
+    <div class="content content-px32">
+      <p class="lead">Не удалось отправить запрос. Проверьте интернет-соединение и попробуйте еще раз. Ваш текст сохранен.</p>
+    </div>
+    <footer class="bottom-bar bottom-bar-stack">
+      <button class="btn btn-primary" data-action="retrySend">Повторить</button>
+      <button class="btn btn-secondary" data-action="chooseReady">Выбрать из готовых вариантов</button>
+    </footer>
+  </section>
+
+  <section class="screen" id="s52" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="appbar">
+      <button class="appbar-back" data-action="back" aria-label="Назад">
+        <img src="assets/chevron-left.svg" width="24" height="24" alt="">
+      </button>
+      <h1 class="appbar-title">С кем комфортнее работать</h1>
+    </header>
+    <div class="progress-row">
+      <div class="progress"><i class="progress-fill" style="width:40%"></i></div>
+      <span class="progress-count">2 из 5</span>
+    </div>
+    <div class="content content-px32">
+      <div class="option-list" id="genderList"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="sStub" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="appbar">
+      <h1 class="appbar-title">Следующий вопрос</h1>
+    </header>
+    <div class="progress-row">
+      <div class="progress"><i class="progress-fill" style="width:60%"></i></div>
+      <span class="progress-count">3 из 5</span>
+    </div>
+    <div class="content content-px32">
+      <p class="lead">Здесь продолжится существующий сценарий подбора.</p>
+    </div>
+  </section>
+
+  <section class="screen" id="sThanks" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <header class="appbar appbar-close">
+      <button class="appbar-close-btn" data-action="closeThanks" aria-label="Закрыть">
+        <img src="assets/cross.svg" width="24" height="24" alt="">
+      </button>
+    </header>
+    <div class="content content-px32 thanks-content">
+      <div class="thanks-media">
+        <img src="assets/thanks.png" alt="" aria-hidden="true">
+      </div>
+      <h2 class="thanks-title">Спасибо, что поделились</h2>
+      <p class="thanks-body">Мы постараемся найти специалистов, которые смогут помочь. А пока можно записаться к психологу, который поможет разобраться с запросом</p>
+    </div>
+    <footer class="bottom-bar">
+      <button class="btn btn-primary" data-action="signup">Записаться</button>
+    </footer>
+  </section>
+
+  <section class="screen" id="sSafety" data-screen>
+    <div class="statusbar">
+      <span class="sb-time">9:41</span>
+      <span class="sb-icons">
+        <img src="assets/cellular.svg" width="17" height="10.7" alt="">
+        <img src="assets/wifi-dark.svg" width="17.1" height="12.3" alt="">
+        <img src="assets/battery-dark.svg" width="24.3" height="11.3" alt="">
+      </span>
+    </div>
+    <div class="content content-px32 safety">
+      <p class="lead">Важно</p>
+      <p class="lead">Текст этого экрана и правила срабатывания предоставит продуктовая и клиническая команда. Маршрут: /safety.</p>
+    </div>
+  </section>
+
+</div>
+<script src="llm-key.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
