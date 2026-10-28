@@ -143,6 +143,76 @@ const LLM_CONFIG = {
   apiKey: window.LLM_API_KEY || '',
 };
 
+const DECIDER_CONFIG = {
+  endpoint: 'https://openrouter.ai/api/alpha/decisions',
+  primaryModel: 'baseten/mammoth-1:free',
+  fallbackModel: 'microsoft/microsoft-decision-1',
+  threshold: 0.5,
+  maxTopics: 4,
+};
+
+// Пояснения к темам, которые чаще всего путаются между собой
+const TOPIC_GLOSS = {
+  'Плохое настроение': 'устойчивая грусть, тоска, хандра — НЕ тревога и НЕ усталость',
+  'Мысли о суициде': 'желание умереть, покончить с собой, самоповреждение',
+  'Рассеянность': 'невнимательность, забывчивость, трудности концентрации',
+  'Эмоциональное напряжение': 'внутреннее напряжение, нервное истощение, «весь на взводе»',
+  'Страх и тревога': 'тревога, страхи, волнения, паническая боязнь чего-либо',
+  'Перепады настроения': 'резкие смены настроения, эмоциональные качели',
+  'Раздражительность': 'злость, агрессия, срывы на людей, «всё бесит»',
+  'Апатия': 'безразличие, вялость, «ничего не хочется», потеря интереса и радости',
+  'Проблема с питанием и весом': 'переедание, заедание стресса, диеты, вес, РПП',
+  'Панические атаки': 'внезапные приступы паники с физическими симптомами',
+  'Проблемы со сном': 'бессонница, трудности засыпания, кошмары, прерывистый сон',
+  'Стресс и выгорание': 'перегрузка, истощение, выгорание от работы или жизни',
+  'Продуктивность в работе': 'не успевает справляться с задачами, дедлайны',
+  'Прокрастинация': 'откладывает дела, никак не может начать',
+  'Нехимическая зависимость': 'зависимость от игр, ставок, соцсетей, шопинга, телефона — НЕ про еду',
+  'Химическая зависимость': 'алкоголь, курение, вещества, курение вейпа',
+  'Сексуальное здоровье': 'либидо, влечение, интимная жизнь, сексуальные трудности',
+};
+
+async function askDeciderBatch(model, text, questions) {
+  const res = await fetch(DECIDER_CONFIG.endpoint, {
+    method: 'POST',
+    signal: AbortSignal.timeout(7000),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${window.LLM_API_KEY || ''}`,
+    },
+    body: JSON.stringify({ model, state: text, questions }),
+  });
+  if (!res.ok) throw new Error(`decider ${res.status}`);
+  const data = await res.json();
+  return data.answers || {};
+}
+
+async function classifyWithDecider(text) {
+  const topics = GROUPS.flatMap((g) => g.topics);
+  const questions = {};
+  topics.forEach((t, i) => {
+    const gloss = TOPIC_GLOSS[t] || 'Учитывай смысл, синонимы и морфологию русского языка.';
+    questions[`t${i}`] = {
+      type: 'noul',
+      instructions: `Относится ли запрос пользователя к теме «${t}»? ${gloss}`,
+      criteria: { true: 'Да, запрос об этом', false: 'Нет, запрос о другом' },
+    };
+  });
+  let answers;
+  try {
+    answers = await askDeciderBatch(DECIDER_CONFIG.primaryModel, text, questions);
+  } catch (e) {
+    answers = await askDeciderBatch(DECIDER_CONFIG.fallbackModel, text, questions);
+  }
+  const hits = topics
+    .map((topic, i) => ({ topic, score: (answers[`t${i}`] || {}).noul ?? 0 }))
+    .filter((h) => h.score >= DECIDER_CONFIG.threshold)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, DECIDER_CONFIG.maxTopics)
+    .map((h) => h.topic);
+  return hits;
+}
+
 async function classifyWithLLM(text) {
   const topics = GROUPS.flatMap((g) => g.topics);
   const prompt =
@@ -390,10 +460,22 @@ function runClassifier() {
     let matches = [];
     let llmFailed = false;
     if (LLM_CONFIG.apiKey && !text.includes('#unrecognized')) {
+      // 1) decision-модель (mammoth → microsoft): один запрос со всеми темами
       try {
-        matches = await classifyWithLLM(text);
+        matches = await classifyWithDecider(text);
       } catch (e) {
-        llmFailed = true;
+        // 2) chat-модель: few-shot промпт
+        try {
+          matches = await classifyWithLLM(text);
+        } catch (e2) {
+          llmFailed = true;
+        }
+      }
+      // 3) локальный словарь
+      if (!matches.length && !llmFailed) {
+        // decider/LLM уверенно решил, что тем нет — «не распознано»
+        matches = [];
+      } else if (llmFailed) {
         matches = classifyFreeText(text);
       }
     } else {
